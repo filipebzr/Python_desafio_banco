@@ -1,0 +1,92 @@
+from datetime import datetime
+from pandas import pandas as pd
+from pandas import DataFrame as df
+
+
+print('''
+Bem Vindo ao Banco
+''')
+menu = '''
+[d] Depósito
+[s] Saque
+[e] Extrato
+[q] Sair
+'''
+
+saldo = 1000
+limite_saque = 500
+LIMITE_QNT_SAQUES = 3
+
+
+deposito_qnt = 0
+saque_qnt = 0
+
+# Lista de Transações
+lista_depositos = []
+lista_saques = []
+
+while True:
+    print("Digite uma das opções abaixo".center(20))
+    opcao = input(menu.lower())
+
+    if opcao == "d":
+        data = str(datetime.now()).split(".")[0]
+        deposito_qnt = deposito_qnt + 1
+        print("Depósito".upper().center(20))
+        deposito_valor = int(input("Insira do Valor de Depósito R$ "))
+        saldo += deposito_valor
+
+        # df = pd.DataFrame{zip{"Depósito",data,deposito_valor}, columns=['Tipo', ]}
+
+        lista_depositos.append("Depósito")
+        lista_depositos.append(data)
+        lista_depositos.append(deposito_valor)
+
+
+        print(f"""
+        Você depositou R${deposito_valor}
+        Seu Saldo é de R${saldo}
+        """)
+    if opcao == "s":
+        print("saque".upper().center(20))
+        saque_valor = int(input("Insira do Valor de Saque R$ "))
+
+        if saque_qnt <= 3 or saque_valor >= limite_saque :
+            data = str(datetime.now()).split(".")[0]
+            saque_qnt = saque_qnt + 1
+
+            saldo -= saque_valor
+
+            lista_saques.append("Saque")
+            lista_saques.append(data)
+            lista_saques.append(saque_valor)
+
+            print(f"""
+                {data}
+                        Você sacou R${saque_valor}
+                        Seu Saldo é de R${saldo}
+                """)
+        else:
+            print(f'''
+            Você já fez 3 saques 
+            ou
+            Limite máximo por Saque é de {limite_saque}
+            Tente Novamente ou entre em contato com a Gerência.
+            ''')
+    if opcao == "e":
+        print('''
+        Extrato
+        '''.upper().center(20))
+
+        print(f'''
+        Seu Saldo é de R$ {saldo}
+        '''.center(20))
+
+        print(f'''
+        Sua movimentação bancária
+        SAQUES: {pd.DataFrame(lista_saques).to_frame()}       
+        DEPÓSITOS: {pd.DataFrame(lista_depositos)}        
+        ''')
+    if opcao == "q":
+        print("Obrigado por fazer parte do nosso banco, até a próxima!")
+        break
