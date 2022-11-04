@@ -34,6 +34,10 @@ while True:
         deposito_qnt = deposito_qnt + 1
         print("Depósito".upper().center(20))
         deposito_valor = int(input("Insira do Valor de Depósito R$ "))
+        if deposito_valor <= 0:
+            print("Coloque um Valor positivo")
+        else:
+            
         saldo += deposito_valor
 
         # df = pd.DataFrame{zip{"Depósito",data,deposito_valor}, columns=['Tipo', ]}
@@ -90,3 +94,4 @@ while True:
     if opcao == "q":
         print("Obrigado por fazer parte do nosso banco, até a próxima!")
         break
+
