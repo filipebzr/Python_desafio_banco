@@ -1,0 +1,74 @@
+from datetime import datetime
+from typing import TextIO
+from google.colab import files
+
+saldo = 0
+limite_saque = 500
+EXTRATO = ""
+numero_saques = 0
+LIMITE_SAQUES = 3
+
+# para ler os arquivos linha a linha e retornar como lista
+# cliente = clientes.readlines()
+
+# para adicionar uma linha ao arquivo
+# cliente = clientes.append()
+
+# with open('clientes.txt','a', encoding:"utf-8") as clientes:
+#   clientes.write(" #o texto que quer ser colocado# ")
+
+
+def login():
+	global datetime
+	arquivo = files.upload()
+	arquivo = str(arquivo).split("'")[1]
+	with open(f'bd_clietes.txt', 'r', encoding='utf-8') as clientes:
+		clientes = clientes.read()
+		n_linhas = 0
+
+		for linhas in clientes:
+			n_linhas = n_linhas + 1
+
+	print(n_linhas)
+
+#TODO Precisa criar o bd_clientes.txt e precisa separar a leitura do bd_cliente
+
+
+def cadastro():
+	global datetime
+	nome = input('Nome: ').title()
+	sobrenome = input('Sobrenome: ').title()
+	cpf = str(input('cpf: '))
+	endereco = input('Endereço: ')
+	data_nascimento = input('Data de Nascimento (dd/mm/aaaa): ')
+	ano_nascimento = int(data_nascimento.split('/')[2])
+	data_cadastro = str(datetime.now()).split('.')[0]
+	data_cadastro_ano = datetime.today().year
+
+# TODO precisa criar um dicionario dentro de outro dicionario e a cada cliente precisa ser criado um arquivo txt com as informaçoes de limite, saldos e etc pra poder, qudno fazer o login acessar esse bamco de dados de cada cliente
+# 
+
+	if data_cadastro_ano - ano_nascimento >= 18:
+
+		cliente = dict(cpf=cpf, nome=nome, sobrenome=sobrenome, endereco=endereco, data_nascimento=data_nascimento, data_cadastro=data_cadastro)
+		print(cliente)
+
+		with open('clientes.txt', 'w', encoding='utf-8') as clientes:
+			clientes.write(str(cliente) + '\n')
+			print('''
+      Cadastro Feito com Sucesso!''')
+	elif data_cadastro_ano - ano_nascimento == 17:
+		print(f'''
+        Idade Mínima 18 anos,
+        falta 1 ano,
+        entre em contato com a agencia''')
+	else:
+		idade_que_falta = 18 - (data_cadastro_ano - ano_nascimento)
+		print(f'''
+    Idade Mínima 18 anos,
+    faltam {idade_que_falta} anos para você ser de maior,
+    sendo assim não é possível abrir sua conta.
+        ''')
+
+
+cadastro()
