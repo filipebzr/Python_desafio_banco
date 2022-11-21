@@ -1,0 +1,178 @@
+from datetime import datetime
+import pandas as pd
+
+
+def login():
+
+	global datetime
+	LOGIN = str(input('cpf: '))
+	senha1 = str(input('senha: '))
+
+	clientes = open('clientes.txt')
+	nomes = clientes.readlines()
+ 
+
+	for cpf in nomes:
+		cpf = cpf.split(',')[0].split(':')[1]
+		for senha in nomes:        
+			senha = senha.split(',')[1].split(':')[1]
+			
+		
+		if LOGIN != cpf:
+			return cadastro()
+        elif senha1 == senha:
+            return cadastro()
+		else:
+			continue
+
+
+# TODO Precisa criar o bd_clientes.txt e precisa separar a leitura do bd_cliente
+
+
+def cadastro():
+	nome = input('Nome: ').title()
+	sobrenome = input('Sobrenome: ').title()
+	cpf = str(input('cpf: '))
+	endereco = input('Endereço: ')
+	data_nascimento = input('Data de Nascimento (dd/mm/aaaa): ')
+	ano_nascimento = int(data_nascimento.split('/')[2])
+	data_cadastro = str(datetime.now()).split('.')[0]
+	data_cadastro_ano = datetime.today().year
+	senha = ''
+	saldo = 0
+	limite_saque = 500
+	EXTRATO = ""
+	numero_saques = 0
+	LIMITE_SAQUES = 3
+
+	while True:
+		senha1 = int(input('Digite uma senha: '))
+		senha2 = int(input('Confirme sua senha: '))
+		if senha1 != senha2:
+			print('Digite uma senha igual.')
+		else:
+			senha = senha1
+			break
+
+	senha = senha1
+
+	# TODO precisa criar um dicionario dentro de outro dicionario e a cada cliente precisa ser criado um arquivo txt com as informaçoes de limite, saldos e etc pra poder, qudno fazer o login acessar esse bamco de dados de cada cliente
+	#
+
+	if data_cadastro_ano - ano_nascimento >= 18:
+
+		cliente = dict(
+			cpf=cpf,
+			senha=senha1,
+			data_cadastro=data_cadastro,
+			nome=nome,
+			sobrenome=sobrenome,
+			endereco=endereco,
+			data_nascimento=data_nascimento,
+			saldo=saldo,
+			limite_saque=limite_saque,
+			EXTRATO=EXTRATO,
+			numero_saques=numero_saques,
+			LIMITE_SAQUES=LIMITE_SAQUES)
+
+		with open(f'{cpf}.txt', 'w', encoding='utf-8') as clientes:
+			clientes.write(str(cliente))
+
+		with open('clientes.txt', 'a', encoding='utf-8') as clientes:
+			clientes.write(str(cliente) + '\n')
+			print('''
+	    Cadastro Feito com Sucesso!''')
+	elif data_cadastro_ano - ano_nascimento == 17:
+		print(f'''
+        Idade Mínima 18 anos,
+        falta 1 ano,
+        entre em contato com a agencia''')
+	else:
+		idade_que_falta = 18 - (data_cadastro_ano - ano_nascimento)
+		print(f'''
+    Idade Mínima 18 anos,
+    faltam {idade_que_falta} anos para você ser de maior,
+    sendo assim não é possível abrir sua conta.
+        ''')
+
+
+
+
+def saque():
+	global saldo
+	global numero_saques
+	global LIMITE_SAQUES
+	global limite_saque
+
+	valor = float(input("Informe o valor de Saque: R$ "))
+
+	excedeu_saldo = valor > saldo
+	excedeu_limite = valor > limite_saque
+	excedeu_saques = numero_saques >= LIMITE_SAQUES
+
+	if excedeu_saldo:
+		print("Operação Falhou! Você não tem saldo suficiente")
+
+	elif excedeu_limite:
+		print("Operação Falhou! O valor excede o limite!")
+		print(f"Seu limite é de R$ {limite_saque}")
+
+	elif excedeu_saques:
+		print("Operação Falhou! número máximo de saques excedido")
+
+	elif valor > 0:
+		saldo -= valor
+		extrato += "SAQUE: " + f"data:{str(datetime.now()).split('.')[0]} " + f"Valor: R$ {valor:.2f}\n"
+		numero_saques += 1
+	else:
+		print("Operação Falhou! O valor informado é inválido!")
+
+
+def deposito():
+	global saldo
+	global extrato
+	global datetime
+	valor = float(input("Informe o valor do depósito: R$ "))
+
+	if valor > 0:
+		saldo += valor
+		extrato += "DEPÓSITO: " + f"data:{str(datetime.now()).split('.')[0]} " + f"Valor: R$ {valor:.2f}\n"
+	else:
+		print("Operação Falhou! O valor informado é inválido")
+
+
+def extrato():
+	global EXTRATO
+	global saldo
+
+	print("EXTRATO".center(20, '='))
+	print("Não foram realizadas transações" if not EXTRATO else EXTRATO)
+	print(f"\nSaldo: R$ {saldo:.2f}")
+	print(("=" * 20).center(20))
+
+def sair():
+	print("Obrigado e Volte sempre")
+
+
+
+menu = '''
+[d] Depósito
+[s] Saque
+[e] Extrato
+[q] Sair
+'''
+
+while True:
+	opcao = input(menu)
+	if opcao == 's':
+		saque()
+
+	elif opcao == 'd':
+		deposito()
+
+	elif opcao == 'e':
+		extrato()
+
+	elif opcao == 'q':
+		sair()
+		break
